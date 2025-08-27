@@ -1,9 +1,10 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
+	"strings"
 
+	"github.com/mtsfy/umm/internal/umm"
 	"github.com/spf13/cobra"
 )
 
@@ -15,8 +16,10 @@ var rootCmd = &cobra.Command{
 		if len(args) == 0 {
 			cmd.Help()
 		} else {
-			fmt.Println(args[0:])
+			q := strings.Join(args[0:], " ")
+			umm.Query(q)
 		}
+
 	},
 	Example: "umm curl a website but print the headers only",
 }
