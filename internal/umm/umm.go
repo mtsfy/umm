@@ -1,7 +1,20 @@
 package umm
 
-import "github.com/mtsfy/umm/internal/ai"
+import (
+	"fmt"
+
+	"github.com/mtsfy/umm/internal/ai"
+)
 
 func Query(q string) {
-	ai.Ask(q) // for now
+	if q == "" {
+		fmt.Println("empty query")
+		return
+	}
+
+	ai.Ask(q)
+}
+
+func Execute() {
+	fmt.Println("running last suggested command")
 }
