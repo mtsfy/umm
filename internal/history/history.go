@@ -84,3 +84,8 @@ func writeHistory(history types.History) error {
 
 	return nil
 }
+
+func GetLatest() types.Interaction {
+	history := readHistory()
+	return history.Interactions[len(history.Interactions)-1]
+}

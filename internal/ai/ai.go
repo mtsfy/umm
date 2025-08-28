@@ -24,7 +24,7 @@ func Ask(query string) {
 				openai.SystemMessage("You are a technical CLI assistant. Respond with a technical, short answer in JSON format containing two fields: 'description' for a brief summary and 'command' for an example command to run. Ensure that the output is strictly valid JSON."),
 				openai.UserMessage(query),
 			},
-			Model: openai.ChatModelGPT4o,
+			Model: openai.ChatModelGPT4oMini,
 		},
 	)
 	if err != nil {
@@ -33,6 +33,9 @@ func Ask(query string) {
 
 	content := chatCompletion.Choices[0].Message.Content
 	res := parseResponse(content)
+
+	fmt.Println(res.Description)
+	fmt.Println(res.Command)
 
 	history.Save(types.Interaction{
 		UserInput:  query,
