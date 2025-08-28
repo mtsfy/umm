@@ -8,14 +8,11 @@ import (
 	"strings"
 
 	"github.com/mtsfy/umm/internal/config"
+	"github.com/mtsfy/umm/internal/history"
+	"github.com/mtsfy/umm/internal/types"
 	"github.com/openai/openai-go"
 	"github.com/openai/openai-go/option"
 )
-
-type Response struct {
-	Description string `json:"description"`
-	Command     string `json:"command"`
-}
 
 var client openai.Client
 
@@ -35,13 +32,22 @@ func Ask(query string) {
 	}
 
 	content := chatCompletion.Choices[0].Message.Content
+	res := parseResponse(content)
+
+	history.Save(types.Interaction{
+		UserInput:  query,
+		AIResponse: res,
+	})
+}
+
+func parseResponse(content string) types.AIResponse {
+	var res types.AIResponse
+
 	content = strings.TrimPrefix(content, "```json")
 	content = strings.TrimSuffix(content, "```")
 
-	var r Response
-	json.Unmarshal([]byte(content), &r)
-	fmt.Println(r.Description)
-	fmt.Println(r.Command)
+	json.Unmarshal([]byte(content), &res)
+	return res
 }
 
 func init() {
