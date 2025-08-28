@@ -11,7 +11,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:     "umm [question]",
 	Short:   "Command-Line AI assistant",
-	Long:    "A command-line AI assistant tool that helps answer questions using natural language.",
+	Long:    "A CLI assistant that uses AI to convert natural language descriptions into effective command-line solutions.",
 	Example: "umm curl a website but print the headers only",
 	Run: func(cmd *cobra.Command, args []string) {
 		run, err := cmd.Flags().GetBool("run")
