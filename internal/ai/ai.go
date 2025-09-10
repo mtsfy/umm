@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"runtime"
 	"strings"
 
 	"github.com/mtsfy/umm/internal/config"
@@ -15,13 +16,16 @@ import (
 )
 
 var client openai.Client
+var system string
 
 func Ask(query string) {
+	prompt := fmt.Sprintf(`You are a technical CLI assistant. Respond with a technical, short answer in JSON format containing two fields: 'description' for a brief summary and 'command' for an example command to run. Ensure that the output is strictly valid JSON. The system is %s.`, system)
+
 	chatCompletion, err := client.Chat.Completions.New(
 		context.TODO(),
 		openai.ChatCompletionNewParams{
 			Messages: []openai.ChatCompletionMessageParamUnion{
-				openai.SystemMessage("You are a technical CLI assistant. Respond with a technical, short answer in JSON format containing two fields: 'description' for a brief summary and 'command' for an example command to run. Ensure that the output is strictly valid JSON."),
+				openai.SystemMessage(prompt),
 				openai.UserMessage(query),
 			},
 			Model: openai.ChatModelGPT4oMini,
@@ -54,6 +58,8 @@ func parseResponse(content string) types.AIResponse {
 }
 
 func init() {
+	system = runtime.GOOS
+
 	apiKey := config.Config("OPENAI_API_KEY")
 
 	if apiKey == "" {
