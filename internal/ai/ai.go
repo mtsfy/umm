@@ -17,7 +17,7 @@ import (
 var client openai.Client
 var system string
 
-func Ask(query string) {
+func Ask(query string) error {
 	prompt := fmt.Sprintf(`You are a technical CLI assistant. Respond with a technical, short answer in JSON format containing two fields: 'description' for a brief summary and 'command' for an example command to run. Ensure that the output is strictly valid JSON. The system is %s.`, system)
 
 	chatCompletion, err := client.Chat.Completions.New(
@@ -31,29 +31,41 @@ func Ask(query string) {
 		},
 	)
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("failed to create chat completion: %w", err)
 	}
 
 	content := chatCompletion.Choices[0].Message.Content
-	res := parseResponse(content)
+
+	res, err := parseResponse(content)
+	if err != nil {
+		return fmt.Errorf("failed to parse response: %w", err)
+	}
 
 	fmt.Println(res.Description)
 	fmt.Println(res.Command)
 
-	history.Save(types.Interaction{
+	if err := history.Save(types.Interaction{
 		UserInput:  query,
 		AIResponse: res,
-	})
+	}); err != nil {
+		return fmt.Errorf("failed to save interaction to history: %w", err)
+	}
+
+	return nil
 }
 
-func parseResponse(content string) types.AIResponse {
+func parseResponse(content string) (types.AIResponse, error) {
 	var res types.AIResponse
 
+	content = strings.TrimSpace(content)
 	content = strings.TrimPrefix(content, "```json")
 	content = strings.TrimSuffix(content, "```")
+	content = strings.TrimSpace(content)
 
-	json.Unmarshal([]byte(content), &res)
-	return res
+	if err := json.Unmarshal([]byte(content), &res); err != nil {
+		return res, err
+	}
+	return res, nil
 }
 
 func init() {

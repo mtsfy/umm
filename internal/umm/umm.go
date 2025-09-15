@@ -10,13 +10,16 @@ import (
 	"github.com/mtsfy/umm/internal/history"
 )
 
-func Query(q string) {
-	if q == "" {
-		fmt.Println("empty query")
+func Query(query string) {
+	query = strings.TrimSpace(query)
+	if query == "" {
+		fmt.Println("No query provided. Please enter a valid query.")
 		return
 	}
 
-	ai.Ask(q)
+	if err := ai.Ask(query); err != nil {
+		fmt.Fprintf(os.Stderr, "Error processing query: %v\n", err)
+	}
 }
 
 func Execute() {
