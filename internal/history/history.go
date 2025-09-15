@@ -5,19 +5,42 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"syscall"
 
 	"github.com/mtsfy/umm/internal/types"
 )
 
-func Save(interaction types.Interaction) error {
-	history := readHistory()
-	history.Interactions = append(history.Interactions, interaction)
-	return writeHistory(history)
+func getHistoryPath() (string, error) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "", fmt.Errorf("unable to determine home directory: %w", err)
+	}
+
+	baseDir := filepath.Join(home, ".umm-cli")
+	historyPath := filepath.Join(baseDir, "history.json")
+
+	if err := os.MkdirAll(baseDir, 0755); err != nil {
+		return "", fmt.Errorf("error creating base directory %s: %w", baseDir, err)
+	}
+
+	if _, err := os.Stat(historyPath); os.IsNotExist(err) {
+		emptyHistory := "{\"interactions\": []}\n"
+		if err := os.WriteFile(historyPath, []byte(emptyHistory), 0644); err != nil {
+			return "", fmt.Errorf("error creating history file %s: %w", historyPath, err)
+		}
+	}
+
+	return historyPath, nil
 }
 
 func loadFile(flag int) (*os.File, error) {
-	f, err := os.OpenFile("data/umm-history.json", flag, 0644)
+	path, err := getHistoryPath()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get history path: %w", err)
+	}
+
+	f, err := os.OpenFile(path, flag, 0644)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open history file: %w", err)
 	}
@@ -85,7 +108,16 @@ func writeHistory(history types.History) error {
 	return nil
 }
 
+func Save(interaction types.Interaction) error {
+	history := readHistory()
+	history.Interactions = append(history.Interactions, interaction)
+	return writeHistory(history)
+}
+
 func GetLatest() types.Interaction {
 	history := readHistory()
+	if len(history.Interactions) == 0 {
+		return types.Interaction{}
+	}
 	return history.Interactions[len(history.Interactions)-1]
 }
