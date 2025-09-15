@@ -8,7 +8,6 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/mtsfy/umm/internal/config"
 	"github.com/mtsfy/umm/internal/history"
 	"github.com/mtsfy/umm/internal/types"
 	"github.com/openai/openai-go"
@@ -60,7 +59,7 @@ func parseResponse(content string) types.AIResponse {
 func init() {
 	system = runtime.GOOS
 
-	apiKey := config.Config("OPENAI_API_KEY")
+	apiKey := os.Getenv("UMM_AI_TOKEN")
 
 	if apiKey == "" {
 		fmt.Println("Unable to get OpenAI API Key.")
