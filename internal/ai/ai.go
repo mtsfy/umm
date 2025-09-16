@@ -55,6 +55,45 @@ func Ask(query string) error {
 }
 
 func FollowUp(lastInteraction types.Interaction, query string) error {
+	prompt := fmt.Sprintf(`You are a technical CLI assistant. Respond with a technical, concise answer in JSON format containing two fields: "description" for a brief summary and "command" for an example command to run. Ensure that the output is strictly valid JSON. 
+The previous query was: "%s"
+The suggested command was: "%s"
+The system is %s.`,
+		lastInteraction.UserInput,
+		lastInteraction.AIResponse.Command,
+		system,
+	)
+
+	chatCompletion, err := client.Chat.Completions.New(
+		context.TODO(),
+		openai.ChatCompletionNewParams{
+			Messages: []openai.ChatCompletionMessageParamUnion{
+				openai.SystemMessage(prompt),
+				openai.UserMessage(query),
+			},
+			Model: openai.ChatModelGPT4oMini,
+		},
+	)
+	if err != nil {
+		return fmt.Errorf("failed to create chat completion: %w", err)
+	}
+
+	content := chatCompletion.Choices[0].Message.Content
+
+	res, err := parseResponse(content)
+	if err != nil {
+		return fmt.Errorf("failed to parse response: %w", err)
+	}
+
+	fmt.Println(res.Description)
+	fmt.Println(res.Command)
+
+	if err := history.Save(types.Interaction{
+		UserInput:  query,
+		AIResponse: res,
+	}); err != nil {
+		return fmt.Errorf("failed to save interaction to history: %w", err)
+	}
 
 	return nil
 }
