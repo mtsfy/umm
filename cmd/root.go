@@ -13,6 +13,9 @@ var rootCmd = &cobra.Command{
 	Short:   "Command-Line AI assistant",
 	Long:    "A CLI assistant that uses AI to convert natural language descriptions into effective command-line solutions.",
 	Example: "umm curl a website but print the headers only",
+	CompletionOptions: cobra.CompletionOptions{
+		HiddenDefaultCmd: true,
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		run, err := cmd.Flags().GetBool("run")
 		if err != nil {
