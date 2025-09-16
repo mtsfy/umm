@@ -13,6 +13,7 @@ var rootCmd = &cobra.Command{
 	Short:   "Command-Line AI assistant",
 	Long:    "A CLI assistant that uses AI to convert natural language descriptions into effective command-line solutions.",
 	Example: "umm curl a website but print the headers only",
+	Args:    cobra.ArbitraryArgs,
 	CompletionOptions: cobra.CompletionOptions{
 		HiddenDefaultCmd: true,
 	},
