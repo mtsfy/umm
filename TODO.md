@@ -12,12 +12,6 @@
        **Example:**  
        `umm --run`
 
-- [ ] **Configuration Management**  
-       _Manage settings such as API key inside umm._  
-       **Example:**  
-       `umm config set api_key YOUR_API_KEY`
-      `umm config show`
-
 - [ ] **Follow-Up Command**  
        _Ask a follow-up question using the most recent query as context._  
        **Example:**  
