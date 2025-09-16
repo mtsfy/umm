@@ -54,6 +54,11 @@ func Ask(query string) error {
 	return nil
 }
 
+func FollowUp(lastInteraction types.Interaction, query string) error {
+
+	return nil
+}
+
 func parseResponse(content string) (types.AIResponse, error) {
 	var res types.AIResponse
 
