@@ -11,6 +11,28 @@ var historyCmd = &cobra.Command{
 	Long:    "View your command history and search through previous AI interactions using keywords. This feature helps you quickly locate past queries and responses.",
 	Example: "umm history --search curl",
 	Run: func(cmd *cobra.Command, args []string) {
-		history.ViewHistory() // simple history view
+		page, err := cmd.Flags().GetInt("page")
+		if err != nil {
+			panic(err)
+		}
+
+		size, err := cmd.Flags().GetInt("size")
+		if err != nil {
+			panic(err)
+		}
+
+		if size != -1 || page != -1 {
+			if page == -1 {
+				page = 1
+			}
+			if size == -1 {
+				size = 10
+			}
+
+			history.PaginatedHistory(page, size)
+			return
+		}
+
+		history.AllHistory()
 	},
 }

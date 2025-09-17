@@ -123,7 +123,7 @@ func GetLatest() types.Interaction {
 	return history.Interactions[len(history.Interactions)-1]
 }
 
-func ViewHistory() {
+func AllHistory() {
 	history := readHistory()
 
 	w := tabwriter.NewWriter(os.Stdout, 10, 0, 2, ' ', 0)
@@ -134,4 +134,30 @@ func ViewHistory() {
 	for i, item := range history.Interactions {
 		fmt.Fprintf(w, "%d\t%s\t%s\n", i, item.UserInput, item.AIResponse.Command)
 	}
+}
+
+func PaginatedHistory(page, size int) {
+	history := readHistory()
+	total := len(history.Interactions)
+
+	start := (page - 1) * size
+	if start >= total {
+		fmt.Println("Page out of range.")
+		return
+	}
+
+	end := start + size
+	if end > total {
+		end = total
+	}
+
+	w := tabwriter.NewWriter(os.Stdout, 10, 0, 2, ' ', 0)
+	defer w.Flush()
+
+	fmt.Fprintln(w, "No.\tUser Query\tSuggested Command")
+	for i, item := range history.Interactions[start:end] {
+		fmt.Fprintf(w, "%d\t%s\t%s\n", i+start, item.UserInput, item.AIResponse.Command)
+	}
+
+	fmt.Fprintf(w, "\nShowing page %d (entries %d to %d of %d)\n", page, start+1, end, total)
 }
