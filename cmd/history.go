@@ -21,6 +21,16 @@ var historyCmd = &cobra.Command{
 			panic(err)
 		}
 
+		search, err := cmd.Flags().GetString("search")
+		if err != nil {
+			panic(err)
+		}
+
+		if search != "" {
+			history.FilterHistory(search)
+			return
+		}
+
 		if size != -1 || page != -1 {
 			if page == -1 {
 				page = 1

@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"text/tabwriter"
 
@@ -163,4 +164,26 @@ func PaginatedHistory(page, size int) {
 	}
 
 	fmt.Fprintf(w, "\nShowing page %d (entries %d to %d of %d)\n", page, start+1, end, total)
+}
+
+func FilterHistory(keyword string) {
+	history := readHistory()
+	var filtered []types.Interaction
+	for _, inter := range history.Interactions {
+		if strings.Contains(strings.ToLower(inter.UserInput), strings.ToLower(keyword)) ||
+			strings.Contains(strings.ToLower(inter.AIResponse.Command), strings.ToLower(keyword)) {
+			filtered = append(filtered, inter)
+		}
+	}
+
+	w := tabwriter.NewWriter(os.Stdout, 10, 0, 2, ' ', 0)
+	defer w.Flush()
+
+	fmt.Fprintln(w, "No.\tUser Query\tSuggested Command\tDate")
+
+	for i, item := range filtered {
+		date := item.Date.Format("2006-01-02 15:04:05")
+		fmt.Fprintf(w, "%d\t%s\t%s\t%s\n", i, item.UserInput, item.AIResponse.Command, date)
+	}
+
 }
