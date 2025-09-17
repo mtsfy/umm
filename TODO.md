@@ -12,20 +12,20 @@
        **Example:**  
        `umm --run`
 
-- [ ] **Follow-Up Command**  
+- [x] **Follow-Up Command**  
        _Ask a follow-up question using the most recent query as context._  
        **Example:**  
        `umm + "what about with curl?"`
-
-- [ ] **Command Preview**  
-       _Preview suggested commands before execution with extra details._  
-       **Example:**  
-       `umm preview "list files in current directory"`
 
 - [ ] **Contextual History Search**  
        _Search through previous interactions by keywords._  
        **Example:**  
        `umm history --search "curl"`
+
+- [ ] **Command Preview**  
+       _Preview suggested commands before execution with extra details._  
+       **Example:**  
+       `umm preview "list files in current directory"`
 
 - [ ] **Interactive Mode**  
        _Start an interactive shell that maintains session context._  
