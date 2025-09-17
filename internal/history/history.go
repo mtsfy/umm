@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"syscall"
+	"text/tabwriter"
 
 	"github.com/mtsfy/umm/internal/types"
 )
@@ -120,4 +121,17 @@ func GetLatest() types.Interaction {
 		return types.Interaction{}
 	}
 	return history.Interactions[len(history.Interactions)-1]
+}
+
+func ViewHistory() {
+	history := readHistory()
+
+	w := tabwriter.NewWriter(os.Stdout, 10, 0, 2, ' ', 0)
+	defer w.Flush()
+
+	fmt.Fprintln(w, "No.\tUser Query\tSuggested Command")
+
+	for i, item := range history.Interactions {
+		fmt.Fprintf(w, "%d\t%s\t%s\n", i, item.UserInput, item.AIResponse.Command)
+	}
 }
