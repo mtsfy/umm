@@ -7,6 +7,7 @@ import (
 	"os"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/mtsfy/umm/internal/history"
 	"github.com/mtsfy/umm/internal/types"
@@ -18,6 +19,7 @@ var client openai.Client
 var system string
 
 func Ask(query string) error {
+	date := time.Now()
 	prompt := fmt.Sprintf(`You are a technical CLI assistant. Respond with a technical, short answer in JSON format containing two fields: 'description' for a brief summary and 'command' for an example command to run. Ensure that the output is strictly valid JSON. The system is %s.`, system)
 
 	chatCompletion, err := client.Chat.Completions.New(
@@ -45,6 +47,7 @@ func Ask(query string) error {
 	fmt.Println(res.Command)
 
 	if err := history.Save(types.Interaction{
+		Date:       date,
 		UserInput:  query,
 		AIResponse: res,
 	}); err != nil {
@@ -55,6 +58,7 @@ func Ask(query string) error {
 }
 
 func FollowUp(lastInteraction types.Interaction, query string) error {
+	date := time.Now()
 	prompt := fmt.Sprintf(`You are a technical CLI assistant. Respond with a technical, concise answer in JSON format containing two fields: "description" for a brief summary and "command" for an example command to run. Ensure that the output is strictly valid JSON. 
 The previous query was: "%s"
 The suggested command was: "%s"
@@ -89,6 +93,7 @@ The system is %s.`,
 	fmt.Println(res.Command)
 
 	if err := history.Save(types.Interaction{
+		Date:       date,
 		UserInput:  query,
 		AIResponse: res,
 	}); err != nil {

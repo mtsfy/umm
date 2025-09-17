@@ -111,7 +111,7 @@ func writeHistory(history types.History) error {
 
 func Save(interaction types.Interaction) error {
 	history := readHistory()
-	history.Interactions = append(history.Interactions, interaction)
+	history.Interactions = append([]types.Interaction{interaction}, history.Interactions...)
 	return writeHistory(history)
 }
 
@@ -120,7 +120,7 @@ func GetLatest() types.Interaction {
 	if len(history.Interactions) == 0 {
 		return types.Interaction{}
 	}
-	return history.Interactions[len(history.Interactions)-1]
+	return history.Interactions[0]
 }
 
 func AllHistory() {
@@ -129,10 +129,11 @@ func AllHistory() {
 	w := tabwriter.NewWriter(os.Stdout, 10, 0, 2, ' ', 0)
 	defer w.Flush()
 
-	fmt.Fprintln(w, "No.\tUser Query\tSuggested Command")
+	fmt.Fprintln(w, "No.\tUser Query\tSuggested Command\tDate")
 
 	for i, item := range history.Interactions {
-		fmt.Fprintf(w, "%d\t%s\t%s\n", i, item.UserInput, item.AIResponse.Command)
+		date := item.Date.Format("2006-01-02 15:04:05")
+		fmt.Fprintf(w, "%d\t%s\t%s\t%s\n", i, item.UserInput, item.AIResponse.Command, date)
 	}
 }
 
@@ -154,9 +155,11 @@ func PaginatedHistory(page, size int) {
 	w := tabwriter.NewWriter(os.Stdout, 10, 0, 2, ' ', 0)
 	defer w.Flush()
 
-	fmt.Fprintln(w, "No.\tUser Query\tSuggested Command")
-	for i, item := range history.Interactions[start:end] {
-		fmt.Fprintf(w, "%d\t%s\t%s\n", i+start, item.UserInput, item.AIResponse.Command)
+	fmt.Fprintln(w, "No.\tUser Query\tSuggested Command\tDate")
+
+	for i, item := range history.Interactions {
+		date := item.Date.Format("2006-01-02 15:04:05")
+		fmt.Fprintf(w, "%d\t%s\t%s\t%s\n", i, item.UserInput, item.AIResponse.Command, date)
 	}
 
 	fmt.Fprintf(w, "\nShowing page %d (entries %d to %d of %d)\n", page, start+1, end, total)

@@ -1,11 +1,14 @@
 package types
 
+import "time"
+
 type AIResponse struct {
 	Description string `json:"description"`
 	Command     string `json:"command"`
 }
 
 type Interaction struct {
+	Date       time.Time  `json:"date"`
 	UserInput  string     `json:"user_input"`
 	AIResponse AIResponse `json:"ai_response"`
 }
