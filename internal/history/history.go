@@ -197,3 +197,21 @@ func FilterHistory(keyword string) {
 	}
 
 }
+
+func DeleteAllHistory() error {
+	emptyHistory := types.History{Interactions: []types.Interaction{}}
+	return writeHistory(emptyHistory)
+}
+
+func DeleteHistory(id int) error {
+	history := readHistory()
+
+	if id < 1 || id > len(history.Interactions) {
+		return fmt.Errorf("invalid history ID: %d. Valid range is 1-%d", id, len(history.Interactions))
+	}
+
+	index := id - 1
+	history.Interactions = append(history.Interactions[:index], history.Interactions[index+1:]...)
+
+	return writeHistory(history)
+}
