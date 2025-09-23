@@ -35,14 +35,24 @@ func Execute() {
 		return
 	}
 
+	fmt.Printf("About to run: %s\n", latest.AIResponse.Command)
+	fmt.Print("Do you want to execute this command? (y/n): ")
+
+	var response string
+	fmt.Scanln(&response)
+
+	if strings.ToLower(response) != "y" {
+		fmt.Println("Command execution canceled.")
+		return
+	}
+
 	cmd := exec.Command(cmdArr[0], cmdArr[1:]...)
 
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 
-	fmt.Println("Running last suggested command")
-	fmt.Printf("Command: %s\n", latest.AIResponse.Command)
+	fmt.Println("Running command...")
 
 	if err := cmd.Run(); err != nil {
 		fmt.Printf("Command execution failed: %v\n", err)

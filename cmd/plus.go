@@ -10,11 +10,18 @@ import (
 )
 
 var plusCmd = &cobra.Command{
-	Use:     "+ [question]",
-	Short:   "Ask a follow-up question",
-	Long:    "A follow-up query that builds on the context of your most recent question to expand your previous query.",
-	Args:    cobra.ArbitraryArgs,
-	Example: "umm + what about with curl?",
+	Use:   "+ [follow-up question]",
+	Short: "Ask a follow-up question based on your previous query",
+	Long:  "Ask a follow-up question that builds on your most recent interaction, allowing you to refine or expand without starting from scratch.",
+	Args:  cobra.ArbitraryArgs,
+	Example: `  # Follow up on your last query with additional context
+  umm + what about with curl?
+  
+  # Refine your previous question
+  umm + but for hidden files only
+  
+  # Ask for alternatives to the previous suggestion
+  umm + is there a simpler way?`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			cmd.Help()

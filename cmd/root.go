@@ -9,11 +9,18 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:     "umm [question]",
-	Short:   "Command-Line AI assistant",
-	Long:    "A CLI assistant that uses AI to convert natural language descriptions into effective command-line solutions.",
-	Example: "umm curl a website but print the headers only",
-	Args:    cobra.ArbitraryArgs,
+	Use:   "umm [question]",
+	Short: "AI-powered CLI assistant",
+	Long:  "An AI-powered CLI assistant that converts natural language questions into executable commands with explanations.",
+	Example: `  # Get a command to list files in a tree structure
+  umm list all files like a tree
+  
+  # Find out how to search within files
+  umm search for text in files recursively
+  
+  # Run the last suggested command
+  umm --run`,
+	Args: cobra.ArbitraryArgs,
 	CompletionOptions: cobra.CompletionOptions{
 		HiddenDefaultCmd: true,
 	},
