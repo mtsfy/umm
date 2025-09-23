@@ -134,7 +134,7 @@ func AllHistory() {
 
 	for i, item := range history.Interactions {
 		date := item.Date.Format("2006-01-02 15:04:05")
-		fmt.Fprintf(w, "%d\t%s\t%s\t%s\n", i, item.UserInput, item.AIResponse.Command, date)
+		fmt.Fprintf(w, "%d\t%s\t%s\t%s\n", i+1, item.UserInput, item.AIResponse.Command, date)
 	}
 }
 
@@ -160,7 +160,7 @@ func PaginatedHistory(page, size int) {
 
 	for i, item := range history.Interactions {
 		date := item.Date.Format("2006-01-02 15:04:05")
-		fmt.Fprintf(w, "%d\t%s\t%s\t%s\n", i, item.UserInput, item.AIResponse.Command, date)
+		fmt.Fprintf(w, "%d\t%s\t%s\t%s\n", i+1, item.UserInput, item.AIResponse.Command, date)
 	}
 
 	fmt.Fprintf(w, "\nShowing page %d (entries %d to %d of %d)\n", page, start+1, end, total)
@@ -168,11 +168,21 @@ func PaginatedHistory(page, size int) {
 
 func FilterHistory(keyword string) {
 	history := readHistory()
-	var filtered []types.Interaction
-	for _, inter := range history.Interactions {
+
+	var filtered []struct {
+		index       int
+		interaction types.Interaction
+	}
+	for i, inter := range history.Interactions {
 		if strings.Contains(strings.ToLower(inter.UserInput), strings.ToLower(keyword)) ||
 			strings.Contains(strings.ToLower(inter.AIResponse.Command), strings.ToLower(keyword)) {
-			filtered = append(filtered, inter)
+			filtered = append(filtered, struct {
+				index       int
+				interaction types.Interaction
+			}{
+				index:       i + 1,
+				interaction: inter,
+			})
 		}
 	}
 
@@ -181,9 +191,9 @@ func FilterHistory(keyword string) {
 
 	fmt.Fprintln(w, "No.\tUser Query\tSuggested Command\tDate")
 
-	for i, item := range filtered {
-		date := item.Date.Format("2006-01-02 15:04:05")
-		fmt.Fprintf(w, "%d\t%s\t%s\t%s\n", i, item.UserInput, item.AIResponse.Command, date)
+	for _, item := range filtered {
+		date := item.interaction.Date.Format("2006-01-02 15:04:05")
+		fmt.Fprintf(w, "%d\t%s\t%s\t%s\n", item.index, item.interaction.UserInput, item.interaction.AIResponse.Command, date)
 	}
 
 }
