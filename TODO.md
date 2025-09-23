@@ -17,22 +17,22 @@
        **Example:**  
        `umm + "what about with curl?"`
 
-- [ ] **History**  
+- [x] **History**  
        _Manage your past interactions._
 
-  - [ ] **View**  
+  - [x] **View**  
          _Display your interactions with optional pagination._  
          **Example:** `umm history`  
          **Example:** `umm history --page 2 --size 10`
 
-  - [ ] **Contextual History Search**  
+  - [x] **Contextual History Search**  
          _Filter previous interactions by keywords._  
          **Example:** `umm history --search "curl"`
 
-  - [ ] **Delete**  
+  - [x] **Delete**  
          _Remove interactions from history – either all or specific ones._  
-         **Example:** `umm history --delete`  
-         **Example:** `umm history --delete 2`
+         **Example:** `umm history --delete -1` _(-1 for all history)_
+        **Example:** `umm history --delete 2`
 
 - [ ] **Command Preview**  
        _Preview suggested commands before execution with extra details._  
