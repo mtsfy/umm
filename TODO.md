@@ -7,10 +7,11 @@
        **Example:**  
        `umm how to list files`
 
-- [x] **Run Last Command**  
-       _Re-run the most recent suggested command._  
+- [x] **Run Suggested Command**  
+       _Run the most recent suggested command._  
        **Example:**  
-       `umm --run`
+       `umm --run` _(last suggested)_
+      `umm --run 2`
 
 - [x] **Follow-Up Command**  
        _Ask a follow-up question using the most recent query as context._  

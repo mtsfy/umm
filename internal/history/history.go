@@ -124,6 +124,16 @@ func GetLatest() types.Interaction {
 	return history.Interactions[0]
 }
 
+func GetByID(id int) types.Interaction {
+	history := readHistory()
+
+	if id < 1 || id > len(history.Interactions) {
+		return types.Interaction{}
+	}
+
+	return history.Interactions[id-1]
+}
+
 func AllHistory() {
 	history := readHistory()
 

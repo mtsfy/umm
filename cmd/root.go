@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/mtsfy/umm/internal/umm"
@@ -31,7 +32,13 @@ var rootCmd = &cobra.Command{
 		}
 
 		if run {
-			umm.Execute()
+			if len(args) > 0 {
+				if id, err := strconv.Atoi(args[0]); err == nil {
+					umm.Execute(id)
+					return
+				}
+			}
+			umm.Execute(-1)
 			return
 		}
 
@@ -53,5 +60,5 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().BoolP("run", "r", false, "run the last suggested command")
+	rootCmd.Flags().Bool("run", false, "run the suggested command")
 }

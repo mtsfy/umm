@@ -8,6 +8,7 @@ import (
 
 	"github.com/mtsfy/umm/internal/ai"
 	"github.com/mtsfy/umm/internal/history"
+	"github.com/mtsfy/umm/internal/types"
 )
 
 func Query(query string) {
@@ -22,20 +23,27 @@ func Query(query string) {
 	}
 }
 
-func Execute() {
-	latest := history.GetLatest()
-	if latest.AIResponse.Command == "" {
+func Execute(id int) {
+	var targetInter types.Interaction
+
+	if id == -1 {
+		targetInter = history.GetLatest()
+	} else {
+		targetInter = history.GetByID(id)
+	}
+
+	if targetInter.AIResponse.Command == "" {
 		fmt.Println("No command suggestion found in history")
 		return
 	}
 
-	cmdArr := strings.Fields(latest.AIResponse.Command)
+	cmdArr := strings.Fields(targetInter.AIResponse.Command)
 	if len(cmdArr) == 0 {
 		fmt.Println("Invalid command suggestion")
 		return
 	}
 
-	fmt.Printf("About to run: %s\n", latest.AIResponse.Command)
+	fmt.Printf("About to run: %s\n", targetInter.AIResponse.Command)
 	fmt.Print("Do you want to execute this command? (y/n): ")
 
 	var response string
