@@ -35,10 +35,16 @@
          **Example:** `umm history --delete -1` _(-1 for all history)_
         **Example:** `umm history --delete 2`
 
-- [ ] **Command Preview**  
-       _Preview suggested commands before execution with extra details._  
-       **Example:**  
-       `umm preview "list files in current directory"`
+- [x] **Config**  
+       _Configure API settings and model preferences._
+
+  - [x] **Interactive Setup**  
+         _Use an interactive form to configure all settings._  
+         **Example:** `umm config setup`
+
+  - [x] **Show Configuration**  
+         _Display current configuration settings._  
+         **Example:** `umm config show`
 
 - [ ] **Interactive Mode**  
        _Start an interactive shell that maintains session context._  
