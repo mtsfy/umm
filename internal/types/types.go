@@ -16,3 +16,8 @@ type Interaction struct {
 type History struct {
 	Interactions []Interaction `json:"interactions"`
 }
+
+type Config struct {
+	ApiKey string `json:"api_key"`
+	Model  string `json:"model"`
+}

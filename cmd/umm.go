@@ -3,6 +3,7 @@ package cmd
 func init() {
 	rootCmd.AddCommand(plusCmd)
 	rootCmd.AddCommand(historyCmd)
+	rootCmd.AddCommand(configCmd)
 
 	historyCmd.Flags().Int("page", -1, "page number for pagination")
 	historyCmd.Flags().Int("size", -1, "number of interactions to display per page")
