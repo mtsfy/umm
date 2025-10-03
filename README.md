@@ -2,18 +2,47 @@
 <p align="center" style="font-style: italic;">umm, how do I do that?</p>
 
 > [!NOTE]
-> Work In progress.
+> Work in progress.
 
-## :page_facing_up: Description
+## 📖 Description
 
-A command-line AI assistant that helps you solve command-line tasks. Simply describe what you need done, and it responds with a concise summary and an example solution.
+A command-line AI assistant that converts natural language questions into executable commands with explanations. Ask what you need in plain English and get practical solutions.
 
-## :hammer_and_wrench: Development
+## ✨ Features
 
-- Go 1.24+
+- Ask questions in plain English
+- Built-in safety checks for dangerous commands
+- Build on previous queries with context
+- Search, view, and manage past interactions
+- Choose between GPT-4o, GPT-4o-mini, and GPT-4
 
-## :sparkles: Features
+## 🚀 Quick Start
 
-- Powered by OpenAI's 4o-Mini model
-- Maintains local chat history
-- Suggests and executes command
+```bash
+# Ask a question
+umm "list all files in tree format"
+
+# Follow up on your last query
+umm + "but only show directories"
+
+# Run the suggested command
+umm --run
+
+# View your history
+umm history
+```
+
+## 🛠️ Development
+
+Requires Go 1.24+
+
+```bash
+make build
+make install
+```
+
+Configure your OpenAI API key:
+
+```bash
+umm config setup
+```
