@@ -216,3 +216,15 @@ func Show() {
 		fmt.Println("Model: Not set (will use default)")
 	}
 }
+
+func Get(key string) string {
+	config := readConfig()
+	switch key {
+	case "API_KEY":
+		return config.ApiKey
+	case "MODEL":
+		return config.Model
+	default:
+		return ""
+	}
+}

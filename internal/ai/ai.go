@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/mtsfy/umm/internal/config"
 	"github.com/mtsfy/umm/internal/history"
 	"github.com/mtsfy/umm/internal/types"
 	"github.com/openai/openai-go"
@@ -29,7 +30,7 @@ func Ask(query string) error {
 				openai.SystemMessage(prompt),
 				openai.UserMessage(query),
 			},
-			Model: openai.ChatModelGPT4oMini,
+			Model: getModel(),
 		},
 	)
 	if err != nil {
@@ -75,7 +76,7 @@ The system is %s.`,
 				openai.SystemMessage(prompt),
 				openai.UserMessage(query),
 			},
-			Model: openai.ChatModelGPT4oMini,
+			Model: getModel(),
 		},
 	)
 	if err != nil {
@@ -117,10 +118,24 @@ func parseResponse(content string) (types.AIResponse, error) {
 	return res, nil
 }
 
+func getModel() openai.ChatModel {
+	modelName := config.Get("MODEL")
+	switch modelName {
+	case "gpt-4o-mini":
+		return openai.ChatModelGPT4oMini
+	case "gpt-4o":
+		return openai.ChatModelGPT4o
+	case "gpt-4":
+		return openai.ChatModelGPT4
+	default:
+		return openai.ChatModelGPT4oMini
+	}
+}
+
 func init() {
 	system = runtime.GOOS
 
-	apiKey := os.Getenv("UMM_AI_TOKEN")
+	apiKey := config.Get("API_KEY")
 
 	if apiKey == "" {
 		fmt.Println("Unable to get OpenAI API Key.")
