@@ -8,9 +8,12 @@ type AIResponse struct {
 }
 
 type Interaction struct {
-	Date       time.Time  `json:"date"`
-	UserInput  string     `json:"user_input"`
-	AIResponse AIResponse `json:"ai_response"`
+	Model        string        `json:"model"`
+	ResponseTime time.Duration `json:"response_time"`
+	TokensUsed   int           `json:"tokens_used"`
+	Date         time.Time     `json:"date"`
+	UserInput    string        `json:"user_input"`
+	AIResponse   AIResponse    `json:"ai_response"`
 }
 
 type History struct {

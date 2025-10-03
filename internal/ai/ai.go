@@ -20,7 +20,7 @@ var client openai.Client
 var system string
 
 func Ask(query string) error {
-	date := time.Now()
+	start := time.Now()
 	prompt := fmt.Sprintf(`You are a technical CLI assistant. Respond with a technical, short answer in JSON format containing two fields: 'description' for a brief summary and 'command' for an example command to run. Ensure that the output is strictly valid JSON. The system is %s.`, system)
 
 	chatCompletion, err := client.Chat.Completions.New(
@@ -47,10 +47,16 @@ func Ask(query string) error {
 	fmt.Println(res.Description)
 	fmt.Println(res.Command)
 
+	responseTime := time.Since(start)
+	modelName := config.Get("MODEL")
+
 	if err := history.Save(types.Interaction{
-		Date:       date,
-		UserInput:  query,
-		AIResponse: res,
+		Date:         start,
+		UserInput:    query,
+		ResponseTime: responseTime,
+		Model:        modelName,
+		AIResponse:   res,
+		TokensUsed:   int(chatCompletion.Usage.TotalTokens),
 	}); err != nil {
 		return fmt.Errorf("failed to save interaction to history: %w", err)
 	}

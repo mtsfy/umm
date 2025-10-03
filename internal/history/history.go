@@ -110,6 +110,27 @@ func writeHistory(history types.History) error {
 	return nil
 }
 
+func printer(interactions []types.Interaction, startIndex int) {
+	w := tabwriter.NewWriter(os.Stdout, 10, 0, 2, ' ', 0)
+	defer w.Flush()
+
+	fmt.Fprintln(w, "No.\tUser Query\tSuggested Command\tModel\tResponse Time\tTotal Tokens\tDate")
+
+	for i, item := range interactions {
+		date := item.Date.Format("2006-01-02 15:04:05")
+		responseTime := item.ResponseTime.String()
+		fmt.Fprintf(w, "%d\t%s\t%s\t%s\t%s\t%d\t%s\n",
+			startIndex+i,
+			item.UserInput,
+			item.AIResponse.Command,
+			item.Model,
+			responseTime,
+			item.TokensUsed,
+			date,
+		)
+	}
+}
+
 func Save(interaction types.Interaction) error {
 	history := readHistory()
 	history.Interactions = append([]types.Interaction{interaction}, history.Interactions...)
@@ -136,16 +157,7 @@ func GetByID(id int) types.Interaction {
 
 func AllHistory() {
 	history := readHistory()
-
-	w := tabwriter.NewWriter(os.Stdout, 10, 0, 2, ' ', 0)
-	defer w.Flush()
-
-	fmt.Fprintln(w, "No.\tUser Query\tSuggested Command\tDate")
-
-	for i, item := range history.Interactions {
-		date := item.Date.Format("2006-01-02 15:04:05")
-		fmt.Fprintf(w, "%d\t%s\t%s\t%s\n", i+1, item.UserInput, item.AIResponse.Command, date)
-	}
+	printer(history.Interactions, 1)
 }
 
 func PaginatedHistory(page, size int) {
@@ -163,49 +175,44 @@ func PaginatedHistory(page, size int) {
 		end = total
 	}
 
-	w := tabwriter.NewWriter(os.Stdout, 10, 0, 2, ' ', 0)
-	defer w.Flush()
+	interactions := history.Interactions[start:end]
+	printer(interactions, start+1)
 
-	fmt.Fprintln(w, "No.\tUser Query\tSuggested Command\tDate")
-
-	for i, item := range history.Interactions {
-		date := item.Date.Format("2006-01-02 15:04:05")
-		fmt.Fprintf(w, "%d\t%s\t%s\t%s\n", i+1, item.UserInput, item.AIResponse.Command, date)
-	}
-
-	fmt.Fprintf(w, "\nShowing page %d (entries %d to %d of %d)\n", page, start+1, end, total)
+	fmt.Printf("\nShowing page %d (entries %d to %d of %d)\n", page, start+1, end, total)
 }
 
 func FilterHistory(keyword string) {
 	history := readHistory()
 
-	var filtered []struct {
-		index       int
-		interaction types.Interaction
-	}
+	var filtered []types.Interaction
+	var indices []int
+
 	for i, inter := range history.Interactions {
 		if strings.Contains(strings.ToLower(inter.UserInput), strings.ToLower(keyword)) ||
 			strings.Contains(strings.ToLower(inter.AIResponse.Command), strings.ToLower(keyword)) {
-			filtered = append(filtered, struct {
-				index       int
-				interaction types.Interaction
-			}{
-				index:       i + 1,
-				interaction: inter,
-			})
+			filtered = append(filtered, inter)
+			indices = append(indices, i+1)
 		}
 	}
 
 	w := tabwriter.NewWriter(os.Stdout, 10, 0, 2, ' ', 0)
 	defer w.Flush()
 
-	fmt.Fprintln(w, "No.\tUser Query\tSuggested Command\tDate")
+	fmt.Fprintln(w, "No.\tUser Query\tSuggested Command\tModel\tResponse Time\tTotal Tokens\tDate")
 
-	for _, item := range filtered {
-		date := item.interaction.Date.Format("2006-01-02 15:04:05")
-		fmt.Fprintf(w, "%d\t%s\t%s\t%s\n", item.index, item.interaction.UserInput, item.interaction.AIResponse.Command, date)
+	for i, item := range filtered {
+		date := item.Date.Format("2006-01-02 15:04:05")
+		responseTime := item.ResponseTime.String()
+		fmt.Fprintf(w, "%d\t%s\t%s\t%s\t%s\t%d\t%s\n",
+			indices[i],
+			item.UserInput,
+			item.AIResponse.Command,
+			item.Model,
+			responseTime,
+			item.TokensUsed,
+			date,
+		)
 	}
-
 }
 
 func DeleteAllHistory() error {
